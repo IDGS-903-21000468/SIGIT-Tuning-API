@@ -14,7 +14,7 @@ namespace SigitTuning.API.Helpers
             _configuration = configuration;
         }
 
-        public string GenerarToken(int userId, string email, string nombre)
+        public string GenerarToken(int userId, string email, string nombre, string rol = "Usuario")
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var secretKey = jwtSettings["SecretKey"];
@@ -27,11 +27,12 @@ namespace SigitTuning.API.Helpers
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, email),
-                new Claim("nombre", nombre),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+        new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+        new Claim(JwtRegisteredClaimNames.Email, email),
+        new Claim("nombre", nombre),
+        new Claim(ClaimTypes.Role, rol), // ← AGREGAR AQUÍ
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+    };
 
             var token = new JwtSecurityToken(
                 issuer: issuer,

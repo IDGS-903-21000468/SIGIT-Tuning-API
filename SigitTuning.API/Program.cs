@@ -1,18 +1,16 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-// NUEVO: Imports para servir archivos estáticos
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using SigitTuning.API.Data;
-using System.IO;
 using System.Text;
+using SigitTuning.API.Data;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ===== 1. CONFIGURAR BASE DE DATOS =====
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySQL(builder.Configuration.GetConnectionString("CadenaSql")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CadenaSql")));
 
 // ===== 2. CONFIGURAR AUTENTICACIÓN JWT =====
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -99,39 +97,42 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "SIGIT-Tuning API v1");
-        c.RoutePrefix = string.Empty; // Swagger en la raíz: http://localhost:5000
+        c.RoutePrefix = string.Empty;
     });
 }
 
 // Middleware
 app.UseCors("AllowAll");
 
-//
-// ---> NUEVO: HABILITAR ARCHIVOS ESTÁTICOS <---
-//
-// 1. Habilita el servicio de archivos estáticos para la carpeta wwwroot (general)
+// ===== HABILITAR ARCHIVOS ESTÁTICOS =====
 app.UseStaticFiles();
 
-// 2. Habilita específicamente tu carpeta 'uploads' para que sea accesible vía URL
-// Mapea la ruta URL "/uploads" a la carpeta física "/wwwroot/uploads"
+// Habilitar carpeta uploads general (para social, etc)
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
         Path.Combine(builder.Environment.WebRootPath, "uploads")),
     RequestPath = "/uploads"
 });
-// ---> FIN DE LÍNEAS NUEVAS <---
 
+// Habilitar carpeta avatars específicamente
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.WebRootPath, "uploads", "avatars")),
+    RequestPath = "/uploads/avatars"
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// ===== 7. MENSAJE DE INICIO =====
-Console.WriteLine("╔══════════════════════════════════════════╗");
-Console.WriteLine("║  SIGIT-TUNING API INICIADO               ║");
-Console.WriteLine("║  Puerto: http://localhost:5000           ║");
-Console.WriteLine("║  Swagger: http://localhost:5000          ║");
-Console.WriteLine("╚══════════════════════════════════════════╝");
+// ===== MENSAJE DE INICIO =====
+Console.WriteLine("╔════════════════════════════════════════════╗");
+Console.WriteLine("║  SIGIT-TUNING API INICIADO                 ║");
+Console.WriteLine("║  Puerto: http://localhost:5000             ║");
+Console.WriteLine("║  Swagger: http://localhost:5000            ║");
+Console.WriteLine("║  Usuarios: http://localhost:5000/api/users ║");
+Console.WriteLine("╚════════════════════════════════════════════╝");
 
 app.Run();

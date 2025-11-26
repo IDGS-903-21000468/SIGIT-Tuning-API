@@ -126,7 +126,7 @@ namespace SigitTuning.API.Controllers
 
                 // Generar token JWT
                 var jwtHelper = new JwtHelper(_configuration);
-                var token = jwtHelper.GenerarToken(user.UserID, user.Email, user.Nombre);
+                var token = jwtHelper.GenerarToken(user.UserID, user.Email, user.Nombre, user.Rol); // ← AGREGAR ROL
 
                 return Ok(new AuthResponseDto
                 {
@@ -140,7 +140,8 @@ namespace SigitTuning.API.Controllers
                         Email = user.Email,
                         Telefono = user.Telefono,
                         AvatarURL = user.AvatarURL,
-                        FechaRegistro = user.FechaRegistro
+                        FechaRegistro = user.FechaRegistro,
+                        Rol = user.Rol  // ← AGREGAR ROL
                     }
                 });
             }

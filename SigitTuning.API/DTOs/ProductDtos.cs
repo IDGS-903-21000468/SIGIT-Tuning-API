@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http; // 👈 1. AGREGA ESTO PARA QUE RECONOZCA IFormFile
 
 namespace SigitTuning.API.DTOs
 {
@@ -48,7 +49,12 @@ namespace SigitTuning.API.DTOs
         [Range(0, int.MaxValue, ErrorMessage = "El stock no puede ser negativo")]
         public int Stock { get; set; }
 
+        // Mantenemos esta por si quieres mandar un link de internet
         public string? ImagenURL { get; set; }
+
+        // 👇 2. ¡ESTA ES LA LÍNEA MÁGICA QUE TE FALTABA! 👇
+        // Aquí es donde llega el archivo real (JPG/PNG) desde el React
+        public IFormFile? Imagen { get; set; }
 
         [MaxLength(100)]
         public string? Marca { get; set; }

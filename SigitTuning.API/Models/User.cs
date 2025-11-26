@@ -35,7 +35,12 @@ namespace SigitTuning.API.Models
         [MaxLength(500)]
         public string? AvatarURL { get; set; }
 
-        // Relaciones con otras tablas
+        // ===== NUEVO: Campo de Rol =====
+        [Required]
+        [MaxLength(50)]
+        public string Rol { get; set; } = "Usuario"; // "Usuario" o "Admin"
+
+        // Relaciones
         public virtual ICollection<ShoppingCartItem>? CarritoItems { get; set; }
         public virtual ICollection<Order>? Pedidos { get; set; }
         public virtual ICollection<MarketplaceListing>? PublicacionesMarketplace { get; set; }

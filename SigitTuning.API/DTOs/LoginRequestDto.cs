@@ -43,13 +43,20 @@ namespace SigitTuning.API.DTOs
     }
 
     // ===== INFORMACIÓN DEL USUARIO =====
+    // ===== INFORMACIÓN DEL USUARIO =====
     public class UserDto
     {
         public int UserID { get; set; }
-        public string Nombre { get; set; }
-        public string Email { get; set; }
+
+        // Agregué 'required' para quitar las advertencias amarillas
+        public required string Nombre { get; set; }
+        public required string Email { get; set; }
+
         public string? Telefono { get; set; }
         public string? AvatarURL { get; set; }
         public DateTime FechaRegistro { get; set; }
+
+        // 👇 ESTA ES LA LÍNEA QUE TE FALTABA 👇
+        public string Rol { get; set; }
     }
 }

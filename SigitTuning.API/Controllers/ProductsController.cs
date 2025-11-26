@@ -12,10 +12,12 @@ namespace SigitTuning.API.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _env; // 👈 1. Necesario para guardar archivos
 
-        public ProductsController(ApplicationDbContext context)
+        public ProductsController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: api/Products/categories
@@ -211,7 +213,8 @@ namespace SigitTuning.API.Controllers
         // POST: api/Products (ADMIN)
         [HttpPost]
         [Authorize] // Requiere autenticación
-        public async Task<ActionResult<ApiResponse<ProductDto>>> CreateProduct(CreateProductDto request)
+        // 2. Usamos [FromForm] para recibir archivo + datos
+        public async Task<ActionResult<ApiResponse<ProductDto>>> CreateProduct([FromForm] CreateProductDto request)
         {
             try
             {
@@ -222,12 +225,54 @@ namespace SigitTuning.API.Controllers
                     Descripcion = request.Descripcion,
                     Precio = request.Precio,
                     Stock = request.Stock,
-                    ImagenURL = request.ImagenURL,
+                    // ImagenURL se llenará abajo si hay archivo
                     Marca = request.Marca,
                     Modelo = request.Modelo,
                     Anio = request.Anio,
                     Activo = true
                 };
+
+                // 3. Lógica para guardar la imagen
+                if (request.Imagen != null && request.Imagen.Length > 0)
+                {
+                    // Validar extensiones
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                    var extension = Path.GetExtension(request.Imagen.FileName).ToLower();
+
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        return BadRequest(new ApiResponse<ProductDto>
+                        {
+                            Success = false,
+                            Message = "Solo se permiten archivos de imagen (jpg, png, gif, webp)"
+                        });
+                    }
+
+                    // Definir ruta: wwwroot/uploads/products
+                    var uploadsPath = Path.Combine(_env.WebRootPath, "uploads", "products");
+                    if (!Directory.Exists(uploadsPath))
+                    {
+                        Directory.CreateDirectory(uploadsPath);
+                    }
+
+                    // Crear nombre único
+                    var uniqueFileName = $"{Guid.NewGuid()}{extension}";
+                    var filePath = Path.Combine(uploadsPath, uniqueFileName);
+
+                    // Guardar en disco
+                    await using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await request.Imagen.CopyToAsync(stream);
+                    }
+
+                    // Generar URL pública
+                    product.ImagenURL = $"{Request.Scheme}://{Request.Host}/uploads/products/{uniqueFileName}";
+                }
+                else
+                {
+                    // Si mandaron una URL string en lugar de archivo (opcional)
+                    product.ImagenURL = request.ImagenURL;
+                }
 
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
@@ -257,6 +302,46 @@ namespace SigitTuning.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new ApiResponse<ProductDto>
+                {
+                    Success = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        // DELETE: api/Products/5
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<ActionResult<ApiResponse<string>>> DeleteProduct(int id)
+        {
+            try
+            {
+                var product = await _context.Products.FindAsync(id);
+                if (product == null) return NotFound(new ApiResponse<string> { Success = false, Message = "Producto no encontrado" });
+
+                // Soft delete (desactivar) o Hard delete (borrar)
+                // Aquí hacemos hard delete para ejemplo:
+
+                // Borrar imagen si existe
+                if (!string.IsNullOrEmpty(product.ImagenURL))
+                {
+                    var fileName = Path.GetFileName(product.ImagenURL);
+                    var filePath = Path.Combine(_env.WebRootPath, "uploads", "products", fileName);
+                    if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
+                }
+
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
+
+                return Ok(new ApiResponse<string>
+                {
+                    Success = true,
+                    Message = "Producto eliminado correctamente"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<string>
                 {
                     Success = false,
                     Message = $"Error: {ex.Message}"

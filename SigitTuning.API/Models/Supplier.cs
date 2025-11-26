@@ -41,7 +41,7 @@ namespace SigitTuning.API.Models
 
         [Required]
         [MaxLength(50)]
-        public string TipoProveedor { get; set; } // 'Piezas Terminadas', 'Materia Prima', 'Ambos'
+        public string TipoProveedor { get; set; }
 
         public bool Activo { get; set; } = true;
 
