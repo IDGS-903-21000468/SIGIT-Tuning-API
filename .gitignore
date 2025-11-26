@@ -1,8 +1,14 @@
 .github/instructions/kluster-code-verify.instructions.md
 .kluster
+# Visual Studio
 .vs/
+
+# Build Folders
 bin/
 obj/
+
+# User files
 *.user
-*.vsidx
-wwwroot/uploads/
+*.suo
+*.cache
+*.pdb

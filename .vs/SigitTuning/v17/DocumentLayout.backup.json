@@ -1,0 +1,107 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|c:\\users\\jhoni\\onedrive\\documentos\\idgs1003\\proyecto\\backend\\sigit-tuning-api\\sigittuning.api\\sigittuning.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|solutionrelative:sigittuning.api\\sigittuning.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|c:\\users\\jhoni\\onedrive\\documentos\\idgs1003\\proyecto\\backend\\sigit-tuning-api\\sigittuning.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|solutionrelative:sigittuning.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|c:\\users\\jhoni\\onedrive\\documentos\\idgs1003\\proyecto\\backend\\sigit-tuning-api\\sigittuning.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|solutionrelative:sigittuning.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:130:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\appsettings.json",
+              "RelativeDocumentMoniker": "SigitTuning.API\\appsettings.json",
+              "ToolTip": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\appsettings.json",
+              "RelativeToolTip": "SigitTuning.API\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-26T00:38:22.073Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "SigitTuning.API",
+              "DocumentMoniker": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\SigitTuning.API.csproj",
+              "RelativeDocumentMoniker": "SigitTuning.API\\SigitTuning.API.csproj",
+              "ToolTip": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\SigitTuning.API.csproj",
+              "RelativeToolTip": "SigitTuning.API\\SigitTuning.API.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-26T00:58:36.109Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\Program.cs",
+              "RelativeDocumentMoniker": "SigitTuning.API\\Program.cs",
+              "ToolTip": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\Program.cs",
+              "RelativeToolTip": "SigitTuning.API\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T00:32:41.938Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
