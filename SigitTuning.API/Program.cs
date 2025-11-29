@@ -1,16 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using SigitTuning.API.Data;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+// NUEVO: Imports para servir archivos estáticos
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using SigitTuning.API.Data;
 using System.IO;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ===== 1. CONFIGURAR BASE DE DATOS =====
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CadenaSql")));
+    options.UseMySQL(builder.Configuration.GetConnectionString("CadenaSql")));
 
 // ===== 2. CONFIGURAR AUTENTICACIÓN JWT =====
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -97,106 +99,39 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "SIGIT-Tuning API v1");
-        c.RoutePrefix = string.Empty;
+        c.RoutePrefix = string.Empty; // Swagger en la raíz: http://localhost:5000
     });
 }
 
-// Middleware CORS PRIMERO
+// Middleware
 app.UseCors("AllowAll");
 
-// ===== HABILITAR ARCHIVOS ESTÁTICOS =====
-// 1. Raíz wwwroot por defecto
+//
+// ---> NUEVO: HABILITAR ARCHIVOS ESTÁTICOS <---
+//
+// 1. Habilita el servicio de archivos estáticos para la carpeta wwwroot (general)
 app.UseStaticFiles();
 
-// 2. Carpeta uploads general
-var uploadsPath = Path.Combine(builder.Environment.WebRootPath, "uploads");
-if (!Directory.Exists(uploadsPath))
-{
-    Directory.CreateDirectory(uploadsPath);
-}
-
+// 2. Habilita específicamente tu carpeta 'uploads' para que sea accesible vía URL
+// Mapea la ruta URL "/uploads" a la carpeta física "/wwwroot/uploads"
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(uploadsPath),
-    RequestPath = "/uploads",
-    OnPrepareResponse = ctx =>
-    {
-        // Permitir CORS en archivos estáticos
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
-        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=3600");
-    }
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.WebRootPath, "uploads")),
+    RequestPath = "/uploads"
 });
+// ---> FIN DE LÍNEAS NUEVAS <---
 
-// 3. Carpeta products específica
-var productsPath = Path.Combine(builder.Environment.WebRootPath, "uploads", "products");
-if (!Directory.Exists(productsPath))
-{
-    Directory.CreateDirectory(productsPath);
-}
-
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(productsPath),
-    RequestPath = "/uploads/products",
-    OnPrepareResponse = ctx =>
-    {
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
-        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=3600");
-    }
-});
-
-// 4. Carpeta categories específica
-var categoriesPath = Path.Combine(builder.Environment.WebRootPath, "uploads", "categories");
-if (!Directory.Exists(categoriesPath))
-{
-    Directory.CreateDirectory(categoriesPath);
-}
-
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(categoriesPath),
-    RequestPath = "/uploads/categories",
-    OnPrepareResponse = ctx =>
-    {
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
-        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=3600");
-    }
-});
-
-// 5. Carpeta avatars específica
-var avatarsPath = Path.Combine(builder.Environment.WebRootPath, "uploads", "avatars");
-if (!Directory.Exists(avatarsPath))
-{
-    Directory.CreateDirectory(avatarsPath);
-}
-
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(avatarsPath),
-    RequestPath = "/uploads/avatars",
-    OnPrepareResponse = ctx =>
-    {
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS");
-        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=3600");
-    }
-});
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// ===== MENSAJE DE INICIO =====
-Console.WriteLine("╔════════════════════════════════════════════╗");
-Console.WriteLine("║  SIGIT-TUNING API INICIADO                 ║");
-Console.WriteLine("║  Puerto: http://localhost:5000             ║");
-Console.WriteLine("║  Swagger: http://localhost:5000            ║");
-Console.WriteLine("║  Usuarios: http://localhost:5000/api/users ║");
-Console.WriteLine("║  Uploads: http://localhost:5000/uploads    ║");
-Console.WriteLine("║  Products: http://localhost:5000/uploads/products ║");
-Console.WriteLine("╚════════════════════════════════════════════╝");
+// ===== 7. MENSAJE DE INICIO =====
+Console.WriteLine("╔══════════════════════════════════════════╗");
+Console.WriteLine("║  SIGIT-TUNING API INICIADO               ║");
+Console.WriteLine("║  Puerto: http://localhost:5000           ║");
+Console.WriteLine("║  Swagger: http://localhost:5000          ║");
+Console.WriteLine("╚══════════════════════════════════════════╝");
 
 app.Run();

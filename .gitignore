@@ -1,14 +1,17 @@
-.github/instructions/kluster-code-verify.instructions.md
+# Archivos específicos de kluster
 .kluster
+.github/instructions/kluster-code-verify.instructions.md
 
-# Directorios de Visual Studio y Build
+# Visual Studio / IDE
 .vs/
+*.suo
+*.user
+
+# Archivos de Build y Salida de .NET (bin/ y obj/)
+# [Bb]in/ y [Oo]bj/ manejan mayúsculas y minúsculas en diferentes sistemas operativos
 [Bb]in/
 [Oo]bj/
 
-# Archivos de carga de la web (uploads)
+# Archivos de carga de la aplicación (uploads)
+# Excluye la carpeta 'uploads' sin importar dónde se encuentre dentro de wwwroot
 **/wwwroot/uploads/
-
-# Archivos de proyecto y otros generados
-*.suo
-*.user
