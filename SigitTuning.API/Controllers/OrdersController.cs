@@ -25,6 +25,63 @@ namespace SigitTuning.API.Controllers
             return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
         }
 
+        // ========================================
+        // 🆕 NUEVO ENDPOINT PARA ADMIN - VER TODOS LOS PEDIDOS
+        // ========================================
+        // GET: api/Orders/admin/all
+        [HttpGet("admin/all")]
+        public async Task<ActionResult<ApiResponse<List<OrderDto>>>> GetAllOrdersAdmin()
+        {
+            try
+            {
+                // Obtener TODOS los pedidos sin filtrar por usuario
+                var orders = await _context.Orders
+                    .Include(o => o.Usuario)
+                    .Include(o => o.Detalles)
+                        .ThenInclude(d => d.Producto)
+                    .OrderByDescending(o => o.FechaPedido)
+                    .Select(o => new OrderDto
+                    {
+                        OrderID = o.OrderID,
+                        UserID = o.UserID,
+                        UsuarioNombre = o.Usuario.Nombre,
+                        UsuarioEmail = o.Usuario.Email,
+                        FechaPedido = o.FechaPedido,
+                        Total = o.Total,
+                        Estatus = o.Estatus,
+                        DireccionEnvio = o.DireccionEnvio,
+                        Ciudad = o.Ciudad,
+                        Estado = o.Estado,
+                        NumeroSeguimiento = o.NumeroSeguimiento,
+                        Detalles = o.Detalles.Select(d => new OrderDetailDto
+                        {
+                            ProductID = d.ProductID,
+                            ProductoNombre = d.Producto.Nombre,
+                            ProductoImagen = d.Producto.ImagenURL,
+                            Cantidad = d.Cantidad,
+                            PrecioUnitario = d.PrecioUnitario,
+                            Subtotal = d.Subtotal
+                        }).ToList()
+                    })
+                    .ToListAsync();
+
+                return Ok(new ApiResponse<List<OrderDto>>
+                {
+                    Success = true,
+                    Message = $"{orders.Count} pedidos encontrados",
+                    Data = orders
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<List<OrderDto>>
+                {
+                    Success = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
         // GET: api/Orders (Mis pedidos)
         [HttpGet]
         public async Task<ActionResult<ApiResponse<List<OrderDto>>>> GetMyOrders()
@@ -41,6 +98,7 @@ namespace SigitTuning.API.Controllers
                     .Select(o => new OrderDto
                     {
                         OrderID = o.OrderID,
+                        UserID = userId,
                         FechaPedido = o.FechaPedido,
                         Total = o.Total,
                         Estatus = o.Estatus,
@@ -92,6 +150,7 @@ namespace SigitTuning.API.Controllers
                     .Select(o => new OrderDto
                     {
                         OrderID = o.OrderID,
+                        UserID = o.UserID,
                         FechaPedido = o.FechaPedido,
                         Total = o.Total,
                         Estatus = o.Estatus,
@@ -227,6 +286,7 @@ namespace SigitTuning.API.Controllers
                     .Select(o => new OrderDto
                     {
                         OrderID = o.OrderID,
+                        UserID = o.UserID,
                         FechaPedido = o.FechaPedido,
                         Total = o.Total,
                         Estatus = o.Estatus,

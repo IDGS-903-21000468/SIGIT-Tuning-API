@@ -31,5 +31,9 @@ namespace SigitTuning.API.Models
 
         public virtual ICollection<SocialLike>? Likes { get; set; }
         public virtual ICollection<SocialComment>? Comentarios { get; set; }
+        // En tu modelo SocialPost.cs, agrega:
+        public bool Aprobado { get; set; } = false;
+        public int? AprobadoPorUserID { get; set; }
+        public DateTime? FechaAprobacion { get; set; }
     }
 }

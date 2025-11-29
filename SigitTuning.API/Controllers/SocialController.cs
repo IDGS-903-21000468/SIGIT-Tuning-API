@@ -5,11 +5,9 @@ using SigitTuning.API.Data;
 using SigitTuning.API.DTOs;
 using SigitTuning.API.Models;
 using System.Security.Claims;
-// NUEVO: Imports necesarios para la subida de archivos
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Threading.Tasks;
-
 
 namespace SigitTuning.API.Controllers
 {
@@ -19,25 +17,21 @@ namespace SigitTuning.API.Controllers
     public class SocialController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        // NUEVO: Variable para saber dónde guardar los archivos
         private readonly IWebHostEnvironment _env;
 
-        // MODIFICADO: Constructor ahora inyecta IWebHostEnvironment
         public SocialController(ApplicationDbContext context, IWebHostEnvironment env)
         {
             _context = context;
-            _env = env; // NUEVO
+            _env = env;
         }
 
         private int GetUserId()
         {
-            // ... (Sin cambios)
             return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
         }
 
         private string GetTiempoTranscurrido(DateTime fecha)
         {
-            // ... (Sin cambios)
             var timeSpan = DateTime.Now - fecha;
 
             if (timeSpan.TotalMinutes < 1) return "Ahora";
@@ -47,11 +41,10 @@ namespace SigitTuning.API.Controllers
             return fecha.ToString("dd/MM/yyyy");
         }
 
-        // GET: api/Social/posts
+        // GET: api/Social/posts - MODIFICADO: Solo posts aprobados para usuarios normales
         [HttpGet("posts")]
         public async Task<ActionResult<ApiResponse<List<SocialPostDto>>>> GetPosts()
         {
-            // ... (Sin cambios)
             try
             {
                 var userId = GetUserId();
@@ -60,7 +53,7 @@ namespace SigitTuning.API.Controllers
                     .Include(p => p.Usuario)
                     .Include(p => p.Likes)
                     .Include(p => p.Comentarios)
-                    .Where(p => p.Activo)
+                    .Where(p => p.Activo && p.Aprobado) // SOLO APROBADOS
                     .OrderByDescending(p => p.FechaPublicacion)
                     .Select(p => new SocialPostDto
                     {
@@ -75,11 +68,11 @@ namespace SigitTuning.API.Controllers
                         TotalLikes = p.Likes.Count,
                         TotalComentarios = p.Comentarios.Count,
                         UsuarioLeDioLike = p.Likes.Any(l => l.UserID == userId),
-                        TiempoTranscurrido = ""
+                        TiempoTranscurrido = "",
+                        Aprobado = p.Aprobado
                     })
                     .ToListAsync();
 
-                // Agregar tiempo transcurrido
                 posts.ForEach(p => p.TiempoTranscurrido = GetTiempoTranscurrido(p.FechaPublicacion));
 
                 return Ok(new ApiResponse<List<SocialPostDto>>
@@ -99,11 +92,139 @@ namespace SigitTuning.API.Controllers
             }
         }
 
-        // POST: api/Social/posts
+        // NUEVO: GET: api/Social/posts/pendientes - Para admins
+        [HttpGet("posts/pendientes")]
+        public async Task<ActionResult<ApiResponse<List<SocialPostDto>>>> GetPendingPosts()
+        {
+            try
+            {
+                var userId = GetUserId();
+
+                var posts = await _context.SocialPosts
+                    .Include(p => p.Usuario)
+                    .Include(p => p.Likes)
+                    .Include(p => p.Comentarios)
+                    .Where(p => p.Activo && !p.Aprobado) // SOLO PENDIENTES
+                    .OrderByDescending(p => p.FechaPublicacion)
+                    .Select(p => new SocialPostDto
+                    {
+                        PostID = p.PostID,
+                        UserID = p.UserID,
+                        UsuarioNombre = p.Usuario.Nombre,
+                        UsuarioAvatar = p.Usuario.AvatarURL,
+                        Titulo = p.Titulo,
+                        Descripcion = p.Descripcion,
+                        ImagenURL = p.ImagenURL,
+                        FechaPublicacion = p.FechaPublicacion,
+                        TotalLikes = p.Likes.Count,
+                        TotalComentarios = p.Comentarios.Count,
+                        UsuarioLeDioLike = p.Likes.Any(l => l.UserID == userId),
+                        TiempoTranscurrido = "",
+                        Aprobado = p.Aprobado
+                    })
+                    .ToListAsync();
+
+                posts.ForEach(p => p.TiempoTranscurrido = GetTiempoTranscurrido(p.FechaPublicacion));
+
+                return Ok(new ApiResponse<List<SocialPostDto>>
+                {
+                    Success = true,
+                    Message = "Publicaciones pendientes obtenidas",
+                    Data = posts
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<List<SocialPostDto>>
+                {
+                    Success = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        // NUEVO: POST: api/Social/posts/5/aprobar
+        [HttpPost("posts/{postId}/aprobar")]
+        public async Task<ActionResult<ApiResponse<string>>> AprobarPost(int postId)
+        {
+            try
+            {
+                var userId = GetUserId();
+
+                var post = await _context.SocialPosts.FindAsync(postId);
+
+                if (post == null)
+                {
+                    return NotFound(new ApiResponse<string>
+                    {
+                        Success = false,
+                        Message = "Publicación no encontrada"
+                    });
+                }
+
+                post.Aprobado = true;
+                post.AprobadoPorUserID = userId;
+                post.FechaAprobacion = DateTime.Now;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new ApiResponse<string>
+                {
+                    Success = true,
+                    Message = "Publicación aprobada exitosamente"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        // NUEVO: POST: api/Social/posts/5/rechazar
+        [HttpPost("posts/{postId}/rechazar")]
+        public async Task<ActionResult<ApiResponse<string>>> RechazarPost(int postId)
+        {
+            try
+            {
+                var post = await _context.SocialPosts.FindAsync(postId);
+
+                if (post == null)
+                {
+                    return NotFound(new ApiResponse<string>
+                    {
+                        Success = false,
+                        Message = "Publicación no encontrada"
+                    });
+                }
+
+                post.Activo = false; // Marcar como inactivo (rechazado)
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new ApiResponse<string>
+                {
+                    Success = true,
+                    Message = "Publicación rechazada"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        // POST: api/Social/posts - MODIFICADO: Posts quedan pendientes por defecto
         [HttpPost("posts")]
         public async Task<ActionResult<ApiResponse<SocialPostDto>>> CreatePost(CreateSocialPostDto request)
         {
-            // ... (Sin cambios)
             try
             {
                 var userId = GetUserId();
@@ -115,7 +236,8 @@ namespace SigitTuning.API.Controllers
                     Descripcion = request.Descripcion,
                     ImagenURL = request.ImagenURL,
                     FechaPublicacion = DateTime.Now,
-                    Activo = true
+                    Activo = true,
+                    Aprobado = false // PENDIENTE POR DEFECTO
                 };
 
                 _context.SocialPosts.Add(post);
@@ -137,14 +259,15 @@ namespace SigitTuning.API.Controllers
                         TotalLikes = 0,
                         TotalComentarios = 0,
                         UsuarioLeDioLike = false,
-                        TiempoTranscurrido = "Ahora"
+                        TiempoTranscurrido = "Ahora",
+                        Aprobado = p.Aprobado
                     })
                     .FirstOrDefaultAsync();
 
                 return Ok(new ApiResponse<SocialPostDto>
                 {
                     Success = true,
-                    Message = "Publicación creada exitosamente",
+                    Message = "Publicación enviada para aprobación",
                     Data = postDto
                 });
             }
@@ -158,17 +281,12 @@ namespace SigitTuning.API.Controllers
             }
         }
 
-        //
-        // NUEVO: ENDPOINT PARA SUBIR LA IMAGEN
-        //
         // POST: api/Social/upload
         [HttpPost("upload")]
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
-            // 1. Validar que el archivo exista
             if (file == null || file.Length == 0)
             {
-                // NOTA: Usamos ImageUploadResponseDto, no ApiResponse<T>
                 return BadRequest(new ImageUploadResponseDto
                 {
                     Success = false,
@@ -176,21 +294,17 @@ namespace SigitTuning.API.Controllers
                 });
             }
 
-            // 2. Definir la ruta de guardado (en wwwroot/uploads/social)
             var uploadsPath = Path.Combine(_env.WebRootPath, "uploads", "social");
 
-            // Asegurarse que el directorio exista
             if (!Directory.Exists(uploadsPath))
             {
                 Directory.CreateDirectory(uploadsPath);
             }
 
-            // 3. Crear un nombre de archivo único
             var extension = Path.GetExtension(file.FileName);
             var uniqueFileName = $"{Guid.NewGuid()}{extension}";
             var filePath = Path.Combine(uploadsPath, uniqueFileName);
 
-            // 4. Guardar el archivo en el servidor
             try
             {
                 await using (var stream = new FileStream(filePath, FileMode.Create))
@@ -207,24 +321,20 @@ namespace SigitTuning.API.Controllers
                 });
             }
 
-            // 5. Construir la URL pública que se devolverá a la app
             var publicUrl = $"{Request.Scheme}://{Request.Host}/uploads/social/{uniqueFileName}";
 
-            // 6. Devolver la respuesta exitosa con la URL
             return Ok(new ImageUploadResponseDto
             {
                 Success = true,
                 Message = "Imagen subida exitosamente",
-                Url = publicUrl // Esta es la URL que el ViewModel de Android recibirá
+                Url = publicUrl
             });
         }
-
 
         // POST: api/Social/posts/5/like
         [HttpPost("posts/{postId}/like")]
         public async Task<ActionResult<ApiResponse<string>>> ToggleLike(int postId)
         {
-            // ... (Sin cambios)
             try
             {
                 var userId = GetUserId();
@@ -234,7 +344,6 @@ namespace SigitTuning.API.Controllers
 
                 if (existingLike != null)
                 {
-                    // Quitar like
                     _context.SocialLikes.Remove(existingLike);
                     await _context.SaveChangesAsync();
 
@@ -246,7 +355,6 @@ namespace SigitTuning.API.Controllers
                 }
                 else
                 {
-                    // Agregar like
                     var like = new SocialLike
                     {
                         PostID = postId,
@@ -278,7 +386,6 @@ namespace SigitTuning.API.Controllers
         [HttpGet("posts/{postId}/comments")]
         public async Task<ActionResult<ApiResponse<List<CommentDto>>>> GetComments(int postId)
         {
-            // ... (Sin cambios)
             try
             {
                 var comments = await _context.SocialComments
@@ -320,7 +427,6 @@ namespace SigitTuning.API.Controllers
         [HttpPost("posts/{postId}/comments")]
         public async Task<ActionResult<ApiResponse<CommentDto>>> CreateComment(int postId, CreateCommentDto request)
         {
-            // ... (Sin cambios)
             try
             {
                 var userId = GetUserId();
@@ -372,7 +478,6 @@ namespace SigitTuning.API.Controllers
         [HttpDelete("posts/{postId}")]
         public async Task<ActionResult<ApiResponse<string>>> DeletePost(int postId)
         {
-            // ... (Sin cambios)
             try
             {
                 var userId = GetUserId();

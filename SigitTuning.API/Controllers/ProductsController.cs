@@ -12,7 +12,7 @@ namespace SigitTuning.API.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _env; // 👈 1. Necesario para guardar archivos
+        private readonly IWebHostEnvironment _env;
 
         public ProductsController(ApplicationDbContext context, IWebHostEnvironment env)
         {
@@ -64,7 +64,6 @@ namespace SigitTuning.API.Controllers
                     .Include(p => p.Categoria)
                     .Where(p => p.Activo);
 
-                // Filtrar por categoría si se especifica
                 if (categoryId.HasValue)
                 {
                     query = query.Where(p => p.CategoryID == categoryId.Value);
@@ -212,8 +211,7 @@ namespace SigitTuning.API.Controllers
 
         // POST: api/Products (ADMIN)
         [HttpPost]
-        [Authorize] // Requiere autenticación
-        // 2. Usamos [FromForm] para recibir archivo + datos
+        [Authorize]
         public async Task<ActionResult<ApiResponse<ProductDto>>> CreateProduct([FromForm] CreateProductDto request)
         {
             try
@@ -225,17 +223,14 @@ namespace SigitTuning.API.Controllers
                     Descripcion = request.Descripcion,
                     Precio = request.Precio,
                     Stock = request.Stock,
-                    // ImagenURL se llenará abajo si hay archivo
                     Marca = request.Marca,
                     Modelo = request.Modelo,
                     Anio = request.Anio,
                     Activo = true
                 };
 
-                // 3. Lógica para guardar la imagen
                 if (request.Imagen != null && request.Imagen.Length > 0)
                 {
-                    // Validar extensiones
                     var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
                     var extension = Path.GetExtension(request.Imagen.FileName).ToLower();
 
@@ -248,29 +243,24 @@ namespace SigitTuning.API.Controllers
                         });
                     }
 
-                    // Definir ruta: wwwroot/uploads/products
                     var uploadsPath = Path.Combine(_env.WebRootPath, "uploads", "products");
                     if (!Directory.Exists(uploadsPath))
                     {
                         Directory.CreateDirectory(uploadsPath);
                     }
 
-                    // Crear nombre único
                     var uniqueFileName = $"{Guid.NewGuid()}{extension}";
                     var filePath = Path.Combine(uploadsPath, uniqueFileName);
 
-                    // Guardar en disco
                     await using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await request.Imagen.CopyToAsync(stream);
                     }
 
-                    // Generar URL pública
                     product.ImagenURL = $"{Request.Scheme}://{Request.Host}/uploads/products/{uniqueFileName}";
                 }
                 else
                 {
-                    // Si mandaron una URL string en lugar de archivo (opcional)
                     product.ImagenURL = request.ImagenURL;
                 }
 
@@ -309,6 +299,112 @@ namespace SigitTuning.API.Controllers
             }
         }
 
+        // PUT: api/Products/5 (EDITAR PRODUCTO) ✅ NUEVA FUNCIÓN
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<ActionResult<ApiResponse<ProductDto>>> UpdateProduct(int id, [FromForm] CreateProductDto request)
+        {
+            try
+            {
+                var product = await _context.Products.FindAsync(id);
+                if (product == null)
+                {
+                    return NotFound(new ApiResponse<ProductDto>
+                    {
+                        Success = false,
+                        Message = "Producto no encontrado"
+                    });
+                }
+
+                // Actualizar campos básicos
+                product.CategoryID = request.CategoryID;
+                product.Nombre = request.Nombre;
+                product.Descripcion = request.Descripcion;
+                product.Precio = request.Precio;
+                product.Stock = request.Stock;
+                product.Marca = request.Marca;
+                product.Modelo = request.Modelo;
+                product.Anio = request.Anio;
+
+                // Actualizar imagen si se envía una nueva
+                if (request.Imagen != null && request.Imagen.Length > 0)
+                {
+                    // Validar extensión
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                    var extension = Path.GetExtension(request.Imagen.FileName).ToLower();
+
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        return BadRequest(new ApiResponse<ProductDto>
+                        {
+                            Success = false,
+                            Message = "Solo se permiten archivos de imagen (jpg, png, gif, webp)"
+                        });
+                    }
+
+                    // Eliminar imagen anterior si existe
+                    if (!string.IsNullOrEmpty(product.ImagenURL))
+                    {
+                        var oldFileName = Path.GetFileName(product.ImagenURL);
+                        var oldFilePath = Path.Combine(_env.WebRootPath, "uploads", "products", oldFileName);
+                        if (System.IO.File.Exists(oldFilePath))
+                        {
+                            System.IO.File.Delete(oldFilePath);
+                        }
+                    }
+
+                    // Guardar nueva imagen
+                    var uploadsPath = Path.Combine(_env.WebRootPath, "uploads", "products");
+                    if (!Directory.Exists(uploadsPath))
+                    {
+                        Directory.CreateDirectory(uploadsPath);
+                    }
+
+                    var uniqueFileName = $"{Guid.NewGuid()}{extension}";
+                    var filePath = Path.Combine(uploadsPath, uniqueFileName);
+
+                    await using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await request.Imagen.CopyToAsync(stream);
+                    }
+
+                    product.ImagenURL = $"{Request.Scheme}://{Request.Host}/uploads/products/{uniqueFileName}";
+                }
+
+                _context.Products.Update(product);
+                await _context.SaveChangesAsync();
+
+                var productDto = new ProductDto
+                {
+                    ProductID = product.ProductID,
+                    CategoryID = product.CategoryID,
+                    Nombre = product.Nombre,
+                    Descripcion = product.Descripcion,
+                    Precio = product.Precio,
+                    Stock = product.Stock,
+                    ImagenURL = product.ImagenURL,
+                    Marca = product.Marca,
+                    Modelo = product.Modelo,
+                    Anio = product.Anio
+                };
+
+                return Ok(new ApiResponse<ProductDto>
+                {
+                    Success = true,
+                    Message = "Producto actualizado exitosamente",
+                    Data = productDto
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<ProductDto>
+                {
+                    Success = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
         [Authorize]
@@ -319,10 +415,6 @@ namespace SigitTuning.API.Controllers
                 var product = await _context.Products.FindAsync(id);
                 if (product == null) return NotFound(new ApiResponse<string> { Success = false, Message = "Producto no encontrado" });
 
-                // Soft delete (desactivar) o Hard delete (borrar)
-                // Aquí hacemos hard delete para ejemplo:
-
-                // Borrar imagen si existe
                 if (!string.IsNullOrEmpty(product.ImagenURL))
                 {
                     var fileName = Path.GetFileName(product.ImagenURL);
@@ -337,6 +429,140 @@ namespace SigitTuning.API.Controllers
                 {
                     Success = true,
                     Message = "Producto eliminado correctamente"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<string>
+                {
+                    Success = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        // POST: api/Products/categories (ADMIN)
+        [HttpPost("categories")]
+        [Authorize]
+        public async Task<ActionResult<ApiResponse<CategoryDto>>> CreateCategory([FromForm] CreateCategoryDto request)
+        {
+            try
+            {
+                var category = new ProductCategory
+                {
+                    Nombre = request.Nombre,
+                    Descripcion = request.Descripcion,
+                    Activo = true
+                };
+
+                if (request.Imagen != null && request.Imagen.Length > 0)
+                {
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                    var extension = Path.GetExtension(request.Imagen.FileName).ToLower();
+
+                    if (!allowedExtensions.Contains(extension))
+                    {
+                        return BadRequest(new ApiResponse<CategoryDto>
+                        {
+                            Success = false,
+                            Message = "Solo se permiten archivos de imagen (jpg, png, gif, webp)"
+                        });
+                    }
+
+                    var uploadsPath = Path.Combine(_env.WebRootPath, "uploads", "categories");
+                    if (!Directory.Exists(uploadsPath))
+                    {
+                        Directory.CreateDirectory(uploadsPath);
+                    }
+
+                    var uniqueFileName = $"{Guid.NewGuid()}{extension}";
+                    var filePath = Path.Combine(uploadsPath, uniqueFileName);
+
+                    await using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await request.Imagen.CopyToAsync(stream);
+                    }
+
+                    category.ImagenURL = $"{Request.Scheme}://{Request.Host}/uploads/categories/{uniqueFileName}";
+                }
+                else
+                {
+                    category.ImagenURL = request.ImagenURL;
+                }
+
+                _context.ProductCategories.Add(category);
+                await _context.SaveChangesAsync();
+
+                var categoryDto = new CategoryDto
+                {
+                    CategoryID = category.CategoryID,
+                    Nombre = category.Nombre,
+                    Descripcion = category.Descripcion,
+                    ImagenURL = category.ImagenURL
+                };
+
+                return CreatedAtAction(nameof(GetCategories), new { id = category.CategoryID },
+                    new ApiResponse<CategoryDto>
+                    {
+                        Success = true,
+                        Message = "Categoría creada exitosamente",
+                        Data = categoryDto
+                    });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse<CategoryDto>
+                {
+                    Success = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        // DELETE: api/Products/categories/5 (ADMIN)
+        [HttpDelete("categories/{id}")]
+        [Authorize]
+        public async Task<ActionResult<ApiResponse<string>>> DeleteCategory(int id)
+        {
+            try
+            {
+                var category = await _context.ProductCategories.FindAsync(id);
+                if (category == null)
+                {
+                    return NotFound(new ApiResponse<string>
+                    {
+                        Success = false,
+                        Message = "Categoría no encontrada"
+                    });
+                }
+
+                var hasProducts = await _context.Products.AnyAsync(p => p.CategoryID == id);
+                if (hasProducts)
+                {
+                    return BadRequest(new ApiResponse<string>
+                    {
+                        Success = false,
+                        Message = "No se puede eliminar la categoría porque tiene productos asociados"
+                    });
+                }
+
+                if (!string.IsNullOrEmpty(category.ImagenURL))
+                {
+                    var fileName = Path.GetFileName(category.ImagenURL);
+                    var filePath = Path.Combine(_env.WebRootPath, "uploads", "categories", fileName);
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                }
+
+                _context.ProductCategories.Remove(category);
+                await _context.SaveChangesAsync();
+
+                return Ok(new ApiResponse<string>
+                {
+                    Success = true,
+                    Message = "Categoría eliminada correctamente"
                 });
             }
             catch (Exception ex)

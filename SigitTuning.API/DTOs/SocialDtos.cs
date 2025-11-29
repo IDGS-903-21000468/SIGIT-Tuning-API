@@ -29,6 +29,7 @@ namespace SigitTuning.API.DTOs
         public int TotalComentarios { get; set; }
         public bool UsuarioLeDioLike { get; set; }
         public string TiempoTranscurrido { get; set; }
+        public bool Aprobado { get; set; } // NUEVO
     }
 
     // ===== CREAR COMENTARIO =====
@@ -49,4 +50,6 @@ namespace SigitTuning.API.DTOs
         public DateTime FechaComentario { get; set; }
         public string TiempoTranscurrido { get; set; }
     }
+
+   
 }

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http; // 👈 1. AGREGA ESTO PARA QUE RECONOZCA IFormFile
+using Microsoft.AspNetCore.Http;
 
 namespace SigitTuning.API.DTOs
 {
@@ -10,6 +10,23 @@ namespace SigitTuning.API.DTOs
         public string Nombre { get; set; }
         public string? Descripcion { get; set; }
         public string? ImagenURL { get; set; }
+    }
+
+    // ===== CREAR/ACTUALIZAR CATEGORÍA (ADMIN) =====
+    public class CreateCategoryDto
+    {
+        [Required(ErrorMessage = "El nombre es requerido")]
+        [MaxLength(100)]
+        public string Nombre { get; set; }
+
+        [MaxLength(500)]
+        public string? Descripcion { get; set; }
+
+        // URL de imagen si se manda un link
+        public string? ImagenURL { get; set; }
+
+        // Archivo de imagen si se sube desde el dispositivo
+        public IFormFile? Imagen { get; set; }
     }
 
     // ===== PRODUCTO =====
@@ -49,11 +66,7 @@ namespace SigitTuning.API.DTOs
         [Range(0, int.MaxValue, ErrorMessage = "El stock no puede ser negativo")]
         public int Stock { get; set; }
 
-        // Mantenemos esta por si quieres mandar un link de internet
         public string? ImagenURL { get; set; }
-
-        // 👇 2. ¡ESTA ES LA LÍNEA MÁGICA QUE TE FALTABA! 👇
-        // Aquí es donde llega el archivo real (JPG/PNG) desde el React
         public IFormFile? Imagen { get; set; }
 
         [MaxLength(100)]

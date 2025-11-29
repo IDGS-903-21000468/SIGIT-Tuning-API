@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SigitTuning.API.DTOs
 {
@@ -62,6 +64,12 @@ namespace SigitTuning.API.DTOs
     public class OrderDto
     {
         public int OrderID { get; set; }
+        public int UserID { get; set; }
+
+        // 👇 NUEVOS CAMPOS PARA ADMIN (ver info del cliente)
+        public string? UsuarioNombre { get; set; }
+        public string? UsuarioEmail { get; set; }
+
         public DateTime FechaPedido { get; set; }
         public decimal Total { get; set; }
         public string Estatus { get; set; }
@@ -87,8 +95,7 @@ namespace SigitTuning.API.DTOs
     public class UpdateOrderStatusDto
     {
         [Required]
-        public string Estatus { get; set; } // "Pendiente", "Empacando", "Enviado", "En Tránsito", "Entregado"
-
+        public string Estatus { get; set; }
         public string? NumeroSeguimiento { get; set; }
     }
 }

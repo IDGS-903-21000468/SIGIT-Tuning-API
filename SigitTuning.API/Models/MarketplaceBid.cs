@@ -25,9 +25,18 @@ namespace SigitTuning.API.Models
         [MaxLength(500)]
         public string? Mensaje { get; set; }
 
+        // ✅ CORREGIDO: Este campo es necesario para que no te marque error en el Controller
+        // (Coincide con la columna BIT que agregamos en SQL)
         public bool Aceptada { get; set; } = false;
 
-        // Relaciones
+        // 🆕 NUEVOS CAMPOS (Coinciden con NVARCHAR y DATETIME en SQL)
+        [Required]
+        [MaxLength(20)]
+        public string Estatus { get; set; } = "Pendiente"; // "Pendiente", "Aceptada", "Rechazada"
+
+        public DateTime? FechaRespuesta { get; set; }
+
+        // --- RELACIONES ---
         [ForeignKey("ListingID")]
         public virtual MarketplaceListing? Publicacion { get; set; }
 

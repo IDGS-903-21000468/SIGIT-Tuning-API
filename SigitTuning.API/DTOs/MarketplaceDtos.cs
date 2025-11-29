@@ -78,6 +78,23 @@ namespace SigitTuning.API.DTOs
         public string? Mensaje { get; set; }
         public DateTime FechaOferta { get; set; }
         public bool Aceptada { get; set; }
+
+        // ⚠️ NUEVOS CAMPOS
+        public string Estatus { get; set; } = "Pendiente"; // "Pendiente", "Aceptada", "Rechazada"
+        public DateTime? FechaRespuesta { get; set; }
+    }
+
+    // ⚠️ DTO para responder ofertas
+    public class RespondBidRequest
+    {
+        [Required]
+        public string Accion { get; set; } // "aceptar" o "rechazar"
+    }
+
+    public class RespondBidResponse
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
     }
 
     // ===== MENSAJE DEL CHAT =====
@@ -93,8 +110,9 @@ namespace SigitTuning.API.DTOs
         public int MessageID { get; set; }
         public int SenderUserID { get; set; }
         public string SenderNombre { get; set; }
+        public string? SenderAvatar { get; set; }
         public string Mensaje { get; set; }
-        public DateTime FechaEnvio { get; set; }
+        public string FechaEnvio { get; set; } // String para evitar problemas de serialización
         public bool EsPropio { get; set; }
     }
 
@@ -104,9 +122,43 @@ namespace SigitTuning.API.DTOs
         public int ChatID { get; set; }
         public int ListingID { get; set; }
         public string ListingTitulo { get; set; }
+        public string? ListingImagen { get; set; }
+        public string ListingEstatus { get; set; } // Para saber si está "Activa" o "Vendida"
         public int OtroUsuarioID { get; set; }
         public string OtroUsuarioNombre { get; set; }
         public string? OtroUsuarioAvatar { get; set; }
+        public bool SoyVendedor { get; set; } // Para mostrar botón de completar venta
         public List<ChatMessageDto> Mensajes { get; set; } = new();
+    }
+
+    // ===== CHAT SUMMARY (INBOX) =====
+    public class ChatSummaryDto
+    {
+        public int ChatID { get; set; }
+        public int ListingID { get; set; }
+        public string ListingTitulo { get; set; }
+        public string? ListingImagen { get; set; }
+        public int OtroUsuarioID { get; set; }
+        public string OtroUsuarioNombre { get; set; }
+        public string? OtroUsuarioAvatar { get; set; }
+        public string? UltimoMensaje { get; set; }
+        public string? FechaUltimoMensaje { get; set; }
+    }
+
+    // ===== 🆕 COMPLETAR VENTA =====
+    public class CompleteSaleDto
+    {
+        [Required(ErrorMessage = "El ID del comprador es requerido")]
+        public int CompradorID { get; set; }
+    }
+
+    public class CompleteSaleResponseDto
+    {
+        public int ListingID { get; set; }
+        public decimal PrecioVenta { get; set; }
+        public decimal Comision { get; set; }
+        public decimal PrecioFinal { get; set; }
+        public string CompradorNombre { get; set; }
+        public DateTime FechaVenta { get; set; }
     }
 }

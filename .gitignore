@@ -1,14 +1,14 @@
 .github/instructions/kluster-code-verify.instructions.md
 .kluster
-# Visual Studio
+
+# Directorios de Visual Studio y Build
 .vs/
+[Bb]in/
+[Oo]bj/
 
-# Build Folders
-bin/
-obj/
+# Archivos de carga de la web (uploads)
+**/wwwroot/uploads/
 
-# User files
-*.user
+# Archivos de proyecto y otros generados
 *.suo
-*.cache
-*.pdb
+*.user
