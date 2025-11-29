@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SigitTuning.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+618278320683a415ef6177359854bd5f0eb2c9c6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9445b555d05ac8be4dc1cdef8b2adf457e566600")]
 [assembly: System.Reflection.AssemblyProductAttribute("SigitTuning.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SigitTuning.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

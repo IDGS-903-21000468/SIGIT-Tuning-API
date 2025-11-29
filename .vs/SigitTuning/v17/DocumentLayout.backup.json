@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|c:\\users\\jhoni\\onedrive\\documentos\\idgs1003\\proyecto\\backend\\sigit-tuning-api\\sigittuning.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|solutionrelative:sigittuning.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|c:\\users\\jhoni\\onedrive\\documentos\\idgs1003\\proyecto\\backend\\sigit-tuning-api\\sigittuning.api\\sigittuning.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|solutionrelative:sigittuning.api\\sigittuning.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|c:\\users\\jhoni\\onedrive\\documentos\\idgs1003\\proyecto\\backend\\sigit-tuning-api\\sigittuning.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|solutionrelative:sigittuning.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|c:\\users\\jhoni\\onedrive\\documentos\\idgs1003\\proyecto\\backend\\sigit-tuning-api\\sigittuning.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{DB9B344E-95D3-46C0-B0F8-03FFAD94ECF4}|SigitTuning.API\\SigitTuning.API.csproj|solutionrelative:sigittuning.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,8 +22,34 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\appsettings.json",
+              "RelativeDocumentMoniker": "SigitTuning.API\\appsettings.json",
+              "ToolTip": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\appsettings.json",
+              "RelativeToolTip": "SigitTuning.API\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-11-29T05:40:35.546Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SigitTuning.API",
+              "DocumentMoniker": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\SigitTuning.API.csproj",
+              "RelativeDocumentMoniker": "SigitTuning.API\\SigitTuning.API.csproj",
+              "ToolTip": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\SigitTuning.API.csproj",
+              "RelativeToolTip": "SigitTuning.API\\SigitTuning.API.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-11-29T05:40:07.45Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
@@ -47,46 +73,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\appsettings.json",
-              "RelativeDocumentMoniker": "SigitTuning.API\\appsettings.json",
-              "ToolTip": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\appsettings.json",
-              "RelativeToolTip": "SigitTuning.API\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAhAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-11-26T00:38:22.073Z",
-              "EditorCaption": ""
-            }
-          ]
-        },
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "SigitTuning.API",
-              "DocumentMoniker": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\SigitTuning.API.csproj",
-              "RelativeDocumentMoniker": "SigitTuning.API\\SigitTuning.API.csproj",
-              "ToolTip": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\SigitTuning.API.csproj",
-              "RelativeToolTip": "SigitTuning.API\\SigitTuning.API.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-11-26T00:58:36.109Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\Program.cs",
               "RelativeDocumentMoniker": "SigitTuning.API\\Program.cs",
               "ToolTip": "C:\\Users\\jhoni\\OneDrive\\Documentos\\IDGS1003\\Proyecto\\backend\\SIGIT-Tuning-API\\SigitTuning.API\\Program.cs",
               "RelativeToolTip": "SigitTuning.API\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAIgAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-26T00:32:41.938Z",
+              "WhenOpened": "2025-11-29T05:39:17.788Z",
               "EditorCaption": ""
             }
           ]
